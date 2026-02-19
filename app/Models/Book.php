@@ -2,14 +2,29 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Book extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, HasFactory;
 
+    protected $fillable = [
+        'title',
+        'isbn',
+        'description',
+        'publisher_date',
+        'page_count',
+        'language',
+        'edition',
+        'total_copies',
+        'author_id',
+        'publisher_id',
+        'status',
+    ];
+    protected $casts = ['publisher_date' => 'date'];
 
     public function author()
     {

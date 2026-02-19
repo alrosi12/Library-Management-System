@@ -13,7 +13,7 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Book $book)
+    public function index()
     {
         // $categories = Category::with('parent')
         //     ->withCount([
@@ -21,7 +21,7 @@ class BookController extends Controller
         //             $query->where('status', '=', 'active');
         //         }
         //     ])
-        $books = Book::with(['author', 'publisher', 'categories', 'borrowings', 'reviews'])->get();
+        $books = Book::with(['author', 'publisher', 'categories', 'borrowings', 'reviews'])->paginate(15);
         return view("dashboard.books.index", compact("books"));
     }
 
@@ -43,32 +43,51 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        // dd($request->all());
 
-        $request->validate([
+        // dd($request->all());
+        $validated =  $request->validate([
             'title'        => ['required', 'string', 'max:255'],
             'author_id'    => ['required', 'exists:authors,id'],
             'publisher_id' => ['nullable', 'exists:publishers,id'],
-            'categories'   => ['nullable', 'array', 'exists:categories,id'],
-            'quantity'     => ['required', 'integer', 'min:1'],
+            'total_copies' => ['required', 'integer', 'min:1'],
             'status'       => ['required', 'in:available,borrowed,reserved,archived'],
             'isbn'         => ['required', 'string', 'size:13', 'unique:books,isbn'],
-            'description'  => ['nullable', 'string'],
-
+            'description'  => ['nullable', 'string', 'max:255'],
+            'page_count'   => ['nullable', 'integer'],
+            'edition'      => ['nullable', 'integer', 'min:1'],
+            'category_ids' => ['required', 'array'],
+            'category_ids.*' => ['exists:categories,id'],
+            'publisher_date' => ['nullable', 'date']
         ]);
 
-        // dd($request);
-        $book = Book::create($request->all());
+        // dd($validated, 'validated');
+        // dd($validated);
+
+        $book = Book::create($validated);
+        $book->categories()->sync($validated['category_ids']);
         return redirect()->route('books.index')->with('success', 'Book Created Successfuly');
         // dd($book);
     }
 
     /**
      * Display the specified resource.
+     *
+     *
+     *
+     * @return \Illuminate\View\View
      */
     public function show(string $id)
     {
-        //
+
+        $book = Book::with([
+            'author',
+            'publisher',
+            'categories',
+            'borrowings.member',
+            'reviews.member'
+        ])->findOrFail($id);
+
+        return view('dashboard.books.show', compact('book'));
     }
 
     /**
@@ -76,7 +95,11 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $book = Book::with('categories')->findOrFail($id);
+        $categories = Category::all();
+        $authors = Author::all();
+        $publishers = Publisher::all();
+        return view('dashboard.books.edit', compact('book', 'categories', 'authors', 'publishers'));
     }
 
     /**
@@ -84,14 +107,34 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $book = Book::findOrFail($id);
+        $validated =  $request->validate([
+            'title'        => ['required', 'string', 'max:255', 'unique:books,title,' . $id],
+            'author_id'    => ['required', 'exists:authors,id'],
+            'publisher_id' => ['nullable', 'exists:publishers,id'],
+            'total_copies' => ['required', 'integer', 'min:1'],
+            'status'       => ['required', 'in:available,borrowed,reserved,archived'],
+            'isbn'         => ['required', 'string', 'size:13', 'unique:books,isbn,' . $id],
+            'description'  => ['nullable', 'string', 'max:255'],
+            'page_count'   => ['nullable', 'integer'],
+            'edition'      => ['nullable', 'integer', 'min:1'],
+            'category_ids' => ['required', 'array'],
+            'category_ids.*' => ['exists:categories,id'],
+            'publisher_date' => ['nullable', 'date']
+        ]);
+        $book->update($validated);
+        $book->categories()->sync($validated['category_ids']);
+        return redirect()->route('books.index')->with('success', 'Book Updated Successfully');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
-    {
-        //
-    }
+   public function destroy(string $id)
+{
+    $book = Book::findOrFail($id);
+    $book->delete();
+
+    return redirect()->route('books.index')->with('success', 'Book Deleted Successfully');
+}
 }

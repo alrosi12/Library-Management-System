@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Borrowing extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'book_id',
         'member_id',
@@ -18,7 +20,6 @@ class Borrowing extends Model
         'borrowed_at' => 'datetime',
         'due_date' => 'date',
         'returned_at' => 'datetime',
-        'status' => 'enum:borrowed,returned,overdue',
     ];
     public function book()
     {

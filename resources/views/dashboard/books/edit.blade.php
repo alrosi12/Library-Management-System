@@ -10,11 +10,11 @@
 
 @section('content')
 
-    <form action="{{ route('dashboard.products.update', $product->id) }}" method="post" enctype="multipart/form-data">
+    <form action="{{ route('books.update', $book->id) }}" method="post">
         @csrf
         @method('put')
 
-        @include('dashboard.products._form', [
+        @include('dashboard.books._form', [
             'button_label' => 'Update',
         ])
     </form>

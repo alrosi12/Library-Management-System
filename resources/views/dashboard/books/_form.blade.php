@@ -1,3 +1,12 @@
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <div class="card card-primary">
     <div class="card-header">
         <h3 class="card-title">Add New Book</h3>
@@ -6,15 +15,36 @@
     <form action="{{ route('books.store') }}" method="POST">
         @csrf
         <div class="card-body">
-            <div class="form-group">
-                <label for="title">Book Title</label>
-                <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
-                    id="title" placeholder="Enter title" value="{{ old('title') }}">
-                @error('title')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="title">Book Title</label>
+                        <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
+                            id="title" placeholder="Enter title" value="{{ old('title', $book->title ?? '') }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="title">Edition</label>
+                            <input type="number" name="edition" class="form-control" min="1"
+                                value="{{ old('edition', $book->edition ?? '') }}">
+                        </div>
+                    </div>
+                </div>
             </div>
 
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="publisher_date">Publish Date</label>
+                    <input type="date" name="publisher_date" id="publisher_date"
+                        class="form-control @error('publisher_date') is-invalid @enderror"
+                        value="{{ old('publisher_date', $book->publisher_date?->format('Y-m-d') ?? '') }}">
+                    @error('publisher_date')
+                        <div class="invalid-feedback">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -23,10 +53,13 @@
                             <option value="">Select Author</option>
                             @foreach ($authors as $author)
                                 <option value="{{ $author->id }}"
-                                    {{ old('author_id') == $author->id ? 'selected' : '' }}>
+                                    {{ old('author_id', $author->id) == $author->id ? 'selected' : '' }}>
                                     {{ $author->name }}
                                 </option>
                             @endforeach
+                            @error('author')
+                                <span class="invalid-feedback">{{ $message }}</span>
+                            @enderror
                         </select>
                     </div>
                 </div>
@@ -38,7 +71,7 @@
                             <option value="">Select Publisher</option>
                             @foreach ($publishers as $publisher)
                                 <option value="{{ $publisher->id }}"
-                                    {{ old('publisher_id') == $publisher->id ? 'selected' : '' }}>
+                                    {{ old('publisher_id', $publisher->id) == $publisher->id ? 'selected' : '' }}>
                                     {{ $publisher->name }}
                                 </option>
                             @endforeach
@@ -49,16 +82,17 @@
 
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>Category</label>
-                    <select name="category_id" class="form-control">
-                        <option value="">Select Category</option>
+                    <label for="categories">Categories</label>
+                    <select name="category_ids[]" id="categories" multiple class="form-control" size="5">
+                        <option value="" disabled>-- اختر الأقسام --</option>
                         @foreach ($categories as $category)
                             <option value="{{ $category->id }}"
-                                {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                {{ (old('category_ids') && in_array($category->id, old('category_ids'))) || (isset($book) && $book->categories->contains($category->id)) ? 'selected' : '' }}>
                                 {{ $category->name }}
                             </option>
                         @endforeach
                     </select>
+                    <small class="form-text text-muted">اضغط Ctrl (أو Cmd في Mac) لاختيار أكثر من قسم</small>
                 </div>
             </div>
 
@@ -66,28 +100,38 @@
                 <div class="col-md-4">
                     <div class="form-group">
                         <label>ISBN</label>
-                        <input type="text" name="isbn" class="form-control" value="{{ old('isbn') }}">
+                        <input type="text" name="isbn" class="form-control"
+                            value="{{ old('isbn', $book->isbn) }}">
                     </div>
+                </div>
+
+                <div class="form-group col-md-4">
+                    <label for="title">Page Count</label>
+                    <input type="number" name="page_count" class="form-control" min="1"
+                        value="{{ old('page_count', $book->page_count) }}">
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Price</label>
-                        <input type="number" step="0.01" name="price" class="form-control"
-                            value="{{ old('price') }}">
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Quantity</label>
-                        <input type="number" name="quantity" class="form-control" value="{{ old('quantity') }}">
+                        <label>Total Copies</label>
+                        <input type="number" name="total_copies" class="form-control"
+                            value="{{ old('total_copies', $book->total_copies) }}" min="1">
                     </div>
                 </div>
             </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" class="form-control @error('description') is-invalid @enderror"
+                        rows="4" placeholder="Enter book description...">{{ old('description', $book->description) }}</textarea>
+
+                </div>
+            </div>
         </div>
-        <div class="form-group">
+        <div class="form-group col-md-4">
             <label for="status">Book Status</label>
             <select name="status" id="status" class="form-control @error('status') is-invalid @enderror">
-                <option value="available" {{ old('status', $book->status ?? 'available') == 'available' ? 'selected' : '' }}>
+                <option value="available"
+                    {{ old('status', $book->status ?? 'available') == 'available' ? 'selected' : '' }}>
                     Available
                 </option>
                 <option value="borrowed" {{ old('status', $book->status ?? '') == 'borrowed' ? 'selected' : '' }}>
@@ -100,14 +144,10 @@
                     Archived
                 </option>
             </select>
-            @error('status')
-                <span class="invalid-feedback">{{ $message }}</span>
-            @enderror
+
         </div>
 
-        <div>
-            <x-form.textarea :label="Description" name="description" />
-        </div>
+
 
         <div class="card-footer">
             <button type="submit" class="btn btn-primary">Save Book</button>
