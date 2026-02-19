@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -50,5 +51,16 @@ class Book extends Model
     public function currentBorrowing()
     {
         return $this->hasOne(Borrowing::class)->where('returned_at', null);
+    }
+
+    public function scopeFilter(Builder $builder, $filters)
+    {
+        $builder->when($filters['title'] ?? false, function ($builder, $value) {
+            $builder->where('title', 'LIKE', "%{$value}%");
+        });
+
+        $builder->when($filters['status'] ?? false, function ($builder, $value) {
+            $builder->where('status', $value);
+        });
     }
 }

@@ -15,13 +15,11 @@ class BookController extends Controller
      */
     public function index()
     {
-        // $categories = Category::with('parent')
-        //     ->withCount([
-        //         'products as products_number' => function ($query) {
-        //             $query->where('status', '=', 'active');
-        //         }
-        //     ])
-        $books = Book::with(['author', 'publisher', 'categories', 'borrowings', 'reviews'])->paginate(15);
+        $request = request();
+
+        $books = Book::with(['author'])
+            ->filter($request->query())
+            ->paginate();
         return view("dashboard.books.index", compact("books"));
     }
 
@@ -130,11 +128,11 @@ class BookController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-   public function destroy(string $id)
-{
-    $book = Book::findOrFail($id);
-    $book->delete();
+    public function destroy(string $id)
+    {
+        $book = Book::findOrFail($id);
+        $book->delete();
 
-    return redirect()->route('books.index')->with('success', 'Book Deleted Successfully');
-}
+        return redirect()->route('books.index')->with('success', 'Book Deleted Successfully');
+    }
 }

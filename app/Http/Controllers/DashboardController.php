@@ -19,7 +19,6 @@ class DashboardController extends Controller
             'overdue_borrows' => Borrowing::where('status', 'overdue')->count(),
         ];
 
-        // جلب آخر 5 عمليات استعارة مع بيانات الكتاب والعضو (Eager Loading)
         $recentBorrowings = Borrowing::with(['book', 'member'])
             ->latest('borrowed_at')
             ->take(5)

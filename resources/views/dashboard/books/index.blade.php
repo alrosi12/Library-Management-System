@@ -33,6 +33,38 @@
     @endif
 
 
+    <form action="{{ URL::current() }}" method="get">
+        <div class="row mb-3">
+            <div class="col-sm-12 col-md-6">
+                <input type="text" name="title" value="{{ request('title') }}" class="form-control"
+                    placeholder="Search by title">
+            </div>
+            <div class="col-sm-12 col-md-5">
+                <select name="status" class="form-control">
+                    <option value="">All Statuses</option>
+
+                    <option value="available" {{ request('status') == 'available' ? 'selected' : '' }}>
+                        Available
+                    </option>
+
+                    <option value="borrowed" {{ request('status') == 'borrowed' ? 'selected' : '' }}>
+                        Borrowed
+                    </option>
+
+                    <option value="reserved" {{ request('status') == 'reserved' ? 'selected' : '' }}>
+                        Reserved
+                    </option>
+
+                    <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>
+                        Archived
+                    </option>
+                </select>
+                
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary  md-2">Filter</button>
+        </div>
+    </form>
 
     <table class="table table-bordered table-striped">
         <thead>
@@ -59,7 +91,8 @@
                             <i class="fa fa-edit"></i> Edit
                         </a>
 
-                        <form action="{{ route('books.destroy', $book->id) }}" method="POST" style="display:inline-block;">
+                        <form action="{{ route('books.destroy', $book->id) }}" method="POST"
+                            style="display:inline-block;">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="btn btn-sm btn-danger">
@@ -72,7 +105,7 @@
         </tbody>
     </table>
 
-    {{ $books->links() }}
+    {{ $books->withQueryString()->links() }}
     <p> Total Records: {{ $books->total() }}</p>
     {{-- withQueryString()->->appends(['search' => 1]) --}}
 @endsection
