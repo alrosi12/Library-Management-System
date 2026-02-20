@@ -34,7 +34,7 @@ class AutherController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Auther $auther)
+    public function show($id)
     {
         //
     }
@@ -42,7 +42,7 @@ class AutherController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Auther $auther)
+    public function edit($id)
     {
         //
     }
@@ -50,7 +50,7 @@ class AutherController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Auther $auther)
+    public function update(Request $request, $id)
     {
         //
     }
@@ -58,7 +58,7 @@ class AutherController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Auther $auther)
+    public function destroy($id)
     {
         //
     }
