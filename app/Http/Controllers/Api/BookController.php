@@ -41,7 +41,7 @@ class BookController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'تم إنشاء الكتاب بنجاح',
+            'message' => 'Created Successfully',
             'data'    => new BookResource($book),
         ], 201);
     }
@@ -59,9 +59,9 @@ class BookController extends Controller
         // $book->load(['author', 'categories']);
 
         return (new BookResource($book))
-            ->response()->json([
+            ->additional([
                 'success' => true,
-                'message' => 'Updated Successfuly',
+                'message' => 'Updated Successfully',
             ]);
     }
 

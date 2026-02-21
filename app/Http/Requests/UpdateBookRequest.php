@@ -19,8 +19,9 @@ class UpdateBookRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules($id): array
+    public function rules(): array
     {
+        $id = $this->route('book');
         return [
             'title'        => ['required', 'string', 'max:255', 'unique:books,title,' . $id],
             'author_id'    => ['required', 'exists:authors,id'],

@@ -60,9 +60,7 @@
                         Archived
                     </option>
 
-                </select>
-
-                </select>
+                </select> 
             </div>
             <button type="submit" class="btn btn-primary  md-2">Filter</button>
         </div>

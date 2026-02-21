@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MemberController;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/', function () {
@@ -14,5 +15,6 @@ Route::prefix('dashboard')
         Route::get('/', [DashboardController::class, 'index'])->name('index');
 
         Route::resource('books', BookController::class);
+        Route::resource('members', MemberController::class)->except('edit','update','store');
     });
 // Route::group('/')

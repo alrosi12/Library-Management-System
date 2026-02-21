@@ -17,6 +17,7 @@
                     <h3 class="card-title">
                         <i class="fas fa-book"></i> Book Information
                     </h3>
+                    
                     <div class="card-tools">
                         <a href="{{ route('books.index') }}" class="btn btn-sm btn-secondary">
                             <i class="fas fa-arrow-left"></i> Back to List
@@ -59,7 +60,7 @@
                                     <th>Total Copies:</th>
                                     <td>{{ $book->total_copies ?? '0' }}</td>
                                 </tr>
-                                <tr>
+                                {{-- <tr>
                                     <th>Status:</th>
                                     <td>
                                         @php
@@ -73,7 +74,7 @@
                                         @endphp
                                         <span class="badge badge-{{ $color }}">{{ ucfirst($book->status) }}</span>
                                     </td>
-                                </tr>
+                                </tr> --}}
                             </table>
                         </div>
                         <div class="col-md-6">
@@ -106,6 +107,24 @@
                             </div>
                             @endif
                         </div>
+
+                        <div class="col-md-6">
+                            <!-- Author Information -->
+                            <div class="card card-info">
+                                <div class="card-header">
+                                    <h3 class="card-title"><i class="fas fa-user"></i> Borrow this book</h3>
+                                </div>
+                                <div class="card-body">
+                                  <select name="member_id" id=""></select>
+                                  @foreach ($borrowings->member as $member )
+                                      {{$borrowings->member_id}}
+                                  @endforeach
+                                  
+                                </div>
+                            </div>
+                        </div>
+
+
                     </div>
                 </div>
             </div>

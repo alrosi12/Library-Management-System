@@ -105,6 +105,8 @@ class BookController extends Controller
     public function update(UpdateBookRequest $request, string $id)
     {
         $book = Book::findOrFail($id);
+        // dd($request->all());
+
         $validated =  $request->validated();
         $book->update($validated);
         $book->categories()->sync($validated['category_ids']);
