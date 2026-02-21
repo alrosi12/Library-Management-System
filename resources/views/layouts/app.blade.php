@@ -191,7 +191,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     {{-- •	Navigation should include links to: Dashboard, Books, Members, Borrowings. --}}
                     <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
                         <li class="nav-item">
-                            <a href="{{ url('/') }}" class="nav-link">
+                            <a href="{{ url('dashboard') }}" class="nav-link">
                                 <i class="nav-icon fas fa-th-large "></i>
                                 <p>Dashboard</p>
                             </a>

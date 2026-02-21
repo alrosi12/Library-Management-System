@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Route;
 //     return view('dashboard.dashboard');
 // });
 
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::prefix('dashboard')
+    // ->name('dashboard.')
+    ->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('index');
 
-Route::resource('books', BookController::class);
-
+        Route::resource('books', BookController::class);
+    });
 // Route::group('/')

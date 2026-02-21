@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
@@ -18,9 +20,22 @@ class BookController extends Controller
         $request = request();
 
         $books = Book::with(['author'])
+            ->withCount([
+                'borrowings as active_borrowings_count' => function ($q) {
+                    $q->whereNull('returned_at');
+                }
+            ])
             ->filter($request->query())
-            ->paginate();
-        return view("dashboard.books.index", compact("books"));
+            ->paginate(15);
+        // $books = Book::with(['author'])
+        //     ->filter($request->query())
+        //     ->paginate();
+        // $books = Book::with(['author'])->available()
+        //    ->available()
+        // ->byLanguage('en')
+        //     ->orderBy('title')
+        //     ->paginate(15);
+        return view("dashboard.books.index", compact('books'));
     }
 
     /**
@@ -30,6 +45,7 @@ class BookController extends Controller
     {
 
         return view('dashboard.books.create', [
+            'book'    => new Book(),
             'authors'    => Author::all(),
             'publishers' => Publisher::all(),
             'categories' => Category::all(),
@@ -39,32 +55,15 @@ class BookController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-
         // dd($request->all());
-        $validated =  $request->validate([
-            'title'        => ['required', 'string', 'max:255'],
-            'author_id'    => ['required', 'exists:authors,id'],
-            'publisher_id' => ['nullable', 'exists:publishers,id'],
-            'total_copies' => ['required', 'integer', 'min:1'],
-            'status'       => ['required', 'in:available,borrowed,reserved,archived'],
-            'isbn'         => ['required', 'string', 'size:13', 'unique:books,isbn'],
-            'description'  => ['nullable', 'string', 'max:255'],
-            'page_count'   => ['nullable', 'integer'],
-            'edition'      => ['nullable', 'integer', 'min:1'],
-            'category_ids' => ['required', 'array'],
-            'category_ids.*' => ['exists:categories,id'],
-            'publisher_date' => ['nullable', 'date']
-        ]);
+        $validated =  $request->validate();
 
-        // dd($validated, 'validated');
         // dd($validated);
-
         $book = Book::create($validated);
         $book->categories()->sync($validated['category_ids']);
         return redirect()->route('books.index')->with('success', 'Book Created Successfuly');
-        // dd($book);
     }
 
     /**
@@ -103,23 +102,10 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBookRequest $request, string $id)
     {
         $book = Book::findOrFail($id);
-        $validated =  $request->validate([
-            'title'        => ['required', 'string', 'max:255', 'unique:books,title,' . $id],
-            'author_id'    => ['required', 'exists:authors,id'],
-            'publisher_id' => ['nullable', 'exists:publishers,id'],
-            'total_copies' => ['required', 'integer', 'min:1'],
-            'status'       => ['required', 'in:available,borrowed,reserved,archived'],
-            'isbn'         => ['required', 'string', 'size:13', 'unique:books,isbn,' . $id],
-            'description'  => ['nullable', 'string', 'max:255'],
-            'page_count'   => ['nullable', 'integer'],
-            'edition'      => ['nullable', 'integer', 'min:1'],
-            'category_ids' => ['required', 'array'],
-            'category_ids.*' => ['exists:categories,id'],
-            'publisher_date' => ['nullable', 'date']
-        ]);
+        $validated =  $request->validated();
         $book->update($validated);
         $book->categories()->sync($validated['category_ids']);
         return redirect()->route('books.index')->with('success', 'Book Updated Successfully');

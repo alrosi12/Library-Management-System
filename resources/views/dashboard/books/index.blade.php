@@ -4,7 +4,8 @@
 
 @section('breadcrumb')
     @parent
-    <li class="breadcrumb-item active">Books</li>
+    <li class="breadcrumb-item active">
+        Books</li>
 @endsection
 
 @section('content')
@@ -58,8 +59,9 @@
                     <option value="archived" {{ request('status') == 'archived' ? 'selected' : '' }}>
                         Archived
                     </option>
+
                 </select>
-                
+
                 </select>
             </div>
             <button type="submit" class="btn btn-primary  md-2">Filter</button>
@@ -81,8 +83,26 @@
                 <tr>
                     <td>{{ $book->title }}</td>
                     <td>{{ $book->author->name ?? '-' }}</td>
-                    <td>{{ $book->status }}</td>
-                    <td>{{ $book->total_copies }}</td>
+                    <td>
+                        @if ($book->is_available)
+                            <span class="badge bg-success"> Available</span>
+                        @else
+                            <span class="badge bg-danger"> Unavailable</span>
+                        @endif
+                        @if ($book->available_copies == 0)
+                            <small class="text-muted">(No copies left)</small>
+                        @elseif($book->available_copies < 3)
+                            <small class="text-warning">(Limited: {{ $book->available_copies }})</small>
+                        @endif
+                    </td>
+
+                    <td>
+                        @if ($book->available_copies > 0)
+                            <span class="badge bg-info">{{ $book->available_copies }} / {{ $book->total_copies }}</span>
+                        @else
+                            <span class="badge bg-secondary">0 / {{ $book->total_copies }}</span>
+                        @endif
+                    </td>
                     <td>
                         <a href="{{ route('books.show', $book->id) }}" class="btn btn-sm btn-info" title="View Details">
                             <i class="fas fa-eye"></i> View

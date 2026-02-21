@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Book;
 use App\Http\Resources\BookResource;
 use Illuminate\Http\Request;
@@ -19,18 +20,14 @@ class BookController extends Controller
 
         return BookResource::collection($books);
     }
+
     public function show($id)
     {
-
         $book = Book::with(['author', 'publisher', 'categories'])
             ->findOrFail($id);
-
-
-        return BookResource::collection($book);
-
-        // response()->json($books)
-
+        return (new BookResource($book));
     }
+
     public function store(StoreBookRequest $request)
     {
         $validated = $request->validated();
@@ -42,27 +39,16 @@ class BookController extends Controller
 
         $book->load(['author', 'categories']);
 
-        return (new BookResource($book))
-            ->response()
-            ->setStatusCode(201);
+        return response()->json([
+            'success' => true,
+            'message' => 'تم إنشاء الكتاب بنجاح',
+            'data'    => new BookResource($book),
+        ], 201);
     }
-    public function update(Request $request, $id)
+    public function update(UpdateBookRequest $request, $id)
     {
         $book = Book::findOrFail($id);
-        $validated =  $request->validate([
-            'title'        => ['required', 'string', 'max:255', 'unique:books,title,' . $id],
-            'author_id'    => ['required', 'exists:authors,id'],
-            'publisher_id' => ['nullable', 'exists:publishers,id'],
-            'total_copies' => ['required', 'integer', 'min:1'],
-            'status'       => ['required', 'in:available,borrowed,reserved,archived'],
-            'isbn'         => ['required', 'string', 'size:13', 'unique:books,isbn,' . $id],
-            'description'  => ['nullable', 'string', 'max:255'],
-            'page_count'   => ['nullable', 'integer'],
-            'edition'      => ['nullable', 'integer', 'min:1'],
-            'category_ids' => ['required', 'array'],
-            'category_ids.*' => ['exists:categories,id'],
-            'publisher_date' => ['nullable', 'date']
-        ]);
+        $validated = $request->validated();
 
         $book->update($validated);
 
@@ -73,15 +59,15 @@ class BookController extends Controller
         // $book->load(['author', 'categories']);
 
         return (new BookResource($book))
-            ->response()
-            ->setStatusCode(200);
+            ->response()->json([
+                'success' => true,
+                'message' => 'Updated Successfuly',
+            ]);
     }
 
     public function destroy(Book $book)
     {
-
         $book->delete();
-
         return response()->json([
             'success' => true,
             'message' => 'soft delete',

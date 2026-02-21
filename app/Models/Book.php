@@ -63,4 +63,24 @@ class Book extends Model
             $builder->where('status', $value);
         });
     }
+
+    public function scopeAvailable(Builder $query): Builder
+    {
+        return $query->where('status', 'available');
+    }
+
+    public function scopeByLanguage(Builder $query, string $lang): Builder
+    {
+        return $query->where('language', $lang);
+    }
+
+    public function getAvailableCopiesAttribute()
+    {
+        return $this->total_copies - ($this->active_borrowings_count ?? 0);
+    }
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->status === 'available' && $this->available_copies > 0;
+    }
 }
