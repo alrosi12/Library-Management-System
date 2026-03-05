@@ -22,7 +22,7 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
         // 'name'            => 'required|string|max:255',
         // 'eamil'           => 'requierd|string|max:255|unique:members,email',
         // 'phone'           => 'nullable|int|max:12',

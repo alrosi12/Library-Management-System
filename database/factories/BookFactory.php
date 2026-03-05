@@ -21,7 +21,7 @@ class BookFactory extends Factory
     {
         $stauts = ['available', 'borrowed', 'reserved', 'archived'];
         return [
-            'title' => fake()->paragraph(3),
+            'title' => fake()->sentence(4),
             'isbn' => fake()->isbn13(),
             'description' => fake()->paragraph(),
             'publish_date' => fake()->date(),

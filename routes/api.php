@@ -11,9 +11,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-Route::apiResource('/books', BookController::class);
-Route::apiResource('members', MemberController::class);
-// Route::get('/books', [BookController::class, 'index']);
-// Route::post('/books', [BookController::class, 'store']);
-// Route::get('/books/{id}', [BookController::class, 'show']);
-// Route::pa('/books/{id}', [BookController::class, 'update']);
+// Route::apiResource('/books', BookController::class);
+// Route::apiResource('members', MemberController::class);

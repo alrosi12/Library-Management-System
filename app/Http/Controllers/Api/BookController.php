@@ -35,7 +35,7 @@ class BookController extends Controller
     }
 
     /**
-     * 0567274666
+     * 
      * Display the specified resource.
      */
     public function show(string $id)
