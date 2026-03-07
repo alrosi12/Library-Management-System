@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->morphs('reviewable_id');
-            $table->morphs('reviewable_type');
+            $table->morphs('reviewable');
             $table->foreignId('member_id')->constrained('members');
             $table->unsignedTinyInteger('rating');
             $table->text('comment')->nullable();

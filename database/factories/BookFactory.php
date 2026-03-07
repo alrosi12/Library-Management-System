@@ -31,7 +31,6 @@ class BookFactory extends Factory
             'total_copies' => fake()->numberBetween(1, 20),
             'author_id' => Author::factory(),
             'publisher_id' => Publisher::factory(),
-            // 'status' => r(),
             'status' => fake()->randomElement(['available', 'borrowed', 'reserved', 'archived']),
         ];
     }

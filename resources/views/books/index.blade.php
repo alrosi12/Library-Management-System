@@ -11,12 +11,22 @@
 
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
     <div class="card">
         <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
             <div class="card-header">
                 {{-- <h3 class="card-title">DataTable with default features</h3> --}}
-                <a class="btn btn-primary" href="{{route('books.create')}}">Create new Book</a>
+                <a class="btn btn-primary" href="{{ route('books.create') }}">Create new Book</a>
             </div>
 
 
@@ -61,7 +71,7 @@
                     <tbody>
                         @foreach ($books as $book)
                             <tr>
-                                <td><a href="{{route('books.show',$book->id) }}">{{ $book->title }}</a></td>
+                                <td><a href="{{ route('books.show', $book->id) }}">{{ $book->title }}</a></td>
                                 <td>{{ $book->author->name }}</td>
                                 <td>{{ $book->status }}</td>
                                 <td>{{ $book->total_copies }}</td>

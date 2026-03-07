@@ -17,9 +17,9 @@ return new class extends Migration
             $table->foreignId('member_id')->constrained('books');
             $table->datetime('borrowed_at');
             $table->date('due_date');
-            $table->datetime('returnd_at')->nullable();
+            $table->datetime('returned_at')->nullable();
             $table->enum('status',['borrowed', 'returned', 'overdue'])->default('borrowed');
-            $table->text('nots')->nullable();
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

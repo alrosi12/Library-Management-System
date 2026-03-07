@@ -20,31 +20,27 @@
         </div>
     @endif
 
+
     <div class="col-md-12">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Create new Book </h3>
+                <h3 class="card-title">Edit Book </h3>
             </div>
 
-            <form action="{{ route('books.store') }}" method="POST">
+            <form action="{{ route('books.update', $book->id) }}" method="put">
                 @csrf
 
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6">
                             <label for="exampleInputEmail1">Title</label>
-                            <input type="text" name="title" class="form-control @error('title') is-invalid @enderror"
-                                id="exampleInputEmail1" placeholder="Enter Title" value="{{ old('title') }}">
-                            @error('title')
-                                <div class="alert alert-danger">{{ $message }}</div>
-                            @enderror
-
-
+                            <input type="text" name="title" class="form-control" id="exampleInputEmail1"
+                                placeholder="Enter Title" value="{{ old('title', $book->title) }}">
                         </div>
                         <div class="col-6">
                             <label for="exampleInputEmail1">Code Isbn</label>
                             <input type="text" name="isbn" class="form-control" placeholder="Code Isbn"
-                                value="{{ old('isbn') }}">
+                                value="{{ old('isbn', $book->isbn) }}">
                         </div>
 
                     </div>
@@ -55,19 +51,19 @@
                             <div class="form-group">
                                 <label for="publisher_date">Publish Date</label>
                                 <input type="date" name="publish_date" id="publisher_date" class="form-control"
-                                    value="{{ old('publisher_date') }}">
-                                {{-- value="{{ old('published_date', $book->publisher_date ? $book->publisher_date->format('Y-m-d') : '') }}" --}}
+                                    value="{{ //  $book->publisher_date->format('Y-m-d')
+                                        date('d-m-Y', $book->publisher_date) }}">
                             </div>
                         </div>
                         <div class="col-4">
                             <label for="page_count">Page Count</label>
                             <input type="text" name="page_count" class="form-control" placeholder="Page Count"
-                                value="{{ old('page_count') }}">
+                                value="{{ old('page_count', $book->page_count) }}">
                         </div>
                         <div class="col-4">
                             <label for="edition">Edition</label>
                             <input type="text" name="edition" class="form-control" id="edition" placeholder="Edition"
-                                value="{{ old('edition') }}">
+                                value="{{ old('edition', $book->edition) }}">
                         </div>
                     </div>
                 </div>
@@ -79,10 +75,14 @@
                             <div class="form-group">
                                 <label>Publisher</label>
                                 <select name="publisher_id" class="form-control select2" style="width: 100%;">
-                                    <option disabled>Select Book publisher</option>
+                                    <option value="">Select Book publisher</option>
                                     @foreach ($publishers as $publisher)
-                                        <option value="{{ $publisher->id }}">{{ $publisher->name }}</option>
+                                        <option value="{{ $publisher->id }}"
+                                            {{ old('publisher_id', $book->publisher_id ?? '') == $publisher->id ? 'selected' : '' }}>
+                                            {{ $publisher->name }}
+                                        </option>
                                     @endforeach
+
                                 </select>
                             </div>
                         </div>
@@ -92,7 +92,9 @@
                                 <select name="author_id" class="form-control select2" style="width: 100%;">
                                     <option disabled>Select Book author</option>
                                     @foreach ($authors as $author)
-                                        <option value="{{ $author->id }}">{{ $author->name }}</option>
+                                        <option value="{{ $author->id }}"
+                                            {{ old('author_id', $author->id) == $author->id ? 'selected' : '' }}>
+                                            {{ $author->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -101,13 +103,17 @@
                             <label>Status</label>
                             <select name="status" class="form-control select2" style="width: 100%;">
                                 <option disabled>Select Book Status</option>
-                                <option value="available" {{ old('status') == 'available' ? 'selected' : '' }}>available
+                                <option value="available"
+                                    {{ old('status', $book->status) == 'available' ? 'selected' : '' }}>available
                                 </option>
-                                <option value="borrowed" {{ old('status') == 'borrowed' ? 'selected' : '' }}>borrowed
+                                <option value="borrowed"
+                                    {{ old('status', $book->status) == 'borrowed' ? 'selected' : '' }}>borrowed
                                 </option>
-                                <option value="reserved" {{ old('status') == 'reserved' ? 'selected' : '' }}>reserved
+                                <option value="reserved"
+                                    {{ old('status', $book->status) == 'reserved' ? 'selected' : '' }}>reserved
                                 </option>
-                                <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>archived
+                                <option value="archived"
+                                    {{ old('status', $book->status) == 'archived' ? 'selected' : '' }}>archived
                                 </option>
                             </select>
                         </div>
@@ -120,7 +126,8 @@
                     <div class="row">
                         <div class="col-4">
                             <label>Textarea</label>
-                            <textarea name="description" class="form-control" rows="3" placeholder="Enter ..."></textarea>
+                            <textarea name="description" class="form-control" rows="3" placeholder="Enter ...">{{ $book->description }}
+                            </textarea>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
@@ -128,7 +135,11 @@
                                 <select name="category_ids[]" class="select2" multiple="multiple"
                                     data-placeholder="Select a State" style="width: 100%;">
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        <option value="{{ $category->id }}">
+                                            {{-- {{ in_array($book->categories->contains($category->id), old('category_ids')) != ''? 'selected' : ''}}> --}}
+                                            {{-- {{ $category->name }} --}}
+                                            {{ $book->categories }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>

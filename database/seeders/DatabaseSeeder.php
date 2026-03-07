@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use App\Models\Author;
 use App\Models\Book;
+use App\Models\Borrowing;
 use App\Models\Category;
 use App\Models\Member;
 use App\Models\Publisher;
+use App\Models\Review;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,6 +27,8 @@ class DatabaseSeeder extends Seeder
         Category::factory(8)->create();
         Book::factory(50)->create();
         Member::factory(20)->create();
+        Borrowing::factory(30)->create();
+        Review::factory(40)->create();
         // Book::factory(50)->create();
 
         // User::factory()->create([

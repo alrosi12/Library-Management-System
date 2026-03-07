@@ -26,7 +26,7 @@ class BookController extends Controller
     {
         $requestValidated = $request->validated();
 
-        $book = Book::with('author', 'categories')->create($requestValidated);
+        $book = Book::create($requestValidated);
         if (!empty($requestValidated['category_ids'])) {
             $book->categories()->sync($requestValidated['category_ids']);
         }
@@ -48,7 +48,7 @@ class BookController extends Controller
      */
     public function update(UpdateBookRequest $request, Book $book)
     {
-        
+
         $requestValidated = $request->validated();
 
 
