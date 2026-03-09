@@ -27,9 +27,9 @@
                 <h3 class="card-title">Edit Book </h3>
             </div>
 
-            <form action="{{ route('books.update', $book->id) }}" method="put">
+            <form action="{{ route('books.update', $book->id) }}" method="POST">
                 @csrf
-
+                @method('PUT')
                 <div class="card-body">
                     <div class="row">
                         <div class="col-6">
@@ -51,8 +51,7 @@
                             <div class="form-group">
                                 <label for="publisher_date">Publish Date</label>
                                 <input type="date" name="publish_date" id="publisher_date" class="form-control"
-                                    value="{{ //  $book->publisher_date->format('Y-m-d')
-                                        date('d-m-Y', $book->publisher_date) }}">
+                                    value="{{ old('published_date', $book->publisher_date ? $book->publisher_date->date('Y-m-d') : '0000-00-00') }}">
                             </div>
                         </div>
                         <div class="col-4">
@@ -135,10 +134,9 @@
                                 <select name="category_ids[]" class="select2" multiple="multiple"
                                     data-placeholder="Select a State" style="width: 100%;">
                                     @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">
-                                            {{-- {{ in_array($book->categories->contains($category->id), old('category_ids')) != ''? 'selected' : ''}}> --}}
-                                            {{-- {{ $category->name }} --}}
-                                            {{ $book->categories }}
+                                        <option value="{{ $category->id }}"
+                                            {{ old('category_ids') || (isset($book) && $book->categories->contains($category->id)) ? 'selected' : '' }}>
+                                            {{ $category->name }}
                                         </option>
                                     @endforeach
                                 </select>

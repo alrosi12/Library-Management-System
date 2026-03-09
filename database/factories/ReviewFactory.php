@@ -20,12 +20,12 @@ class ReviewFactory extends Factory
     {
         // $rand  = [Member::all()->random()->id, Book::all()->random()->id];
         return [
-            'reviewable_id' => fake()->numberBetween(1, 20),
+            // 'reviewable_id' => fake()->numberBetween(1, 20),
 
-            'reviewable_type' => fake()->randomElement([
-                '\App\Models\Book',
-                '\App\Models\Author'
-            ]),
+            // 'reviewable_type' => fake()->randomElement([
+            //     '\App\Models\Book',
+            //     '\App\Models\Author'
+            // ]),
 
             'member_id' => Member::all()->random()->id,
             'rating' => fake()->numberBetween(1, 5),

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -33,5 +35,23 @@ class Borrowing extends Model
     public function member()
     {
         return $this->belongsTo(Member::class);
+    }
+
+    public function scopeOverue(Builder $query)
+    {
+        return $query->where('due_date ', '<', Carbon::now())
+            ->when('returned_at', null);
+    }
+    public function scopeActive(Builder $query)
+    {
+        return $query->where('returned_at', null);
+    }
+    // Accessors
+
+    public function getIsOverdueAttribute()
+    {
+        if ($this->due_date > 14 && $this->returnd_at = null) {
+            return true;
+        }
     }
 }

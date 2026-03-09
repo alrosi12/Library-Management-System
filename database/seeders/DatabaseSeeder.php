@@ -28,7 +28,14 @@ class DatabaseSeeder extends Seeder
         Book::factory(50)->create();
         Member::factory(20)->create();
         Borrowing::factory(30)->create();
-        Review::factory(40)->create();
+        Review::factory(20)->create([
+            'reviewable_id' => Book::all()->random()->id ,
+            'reviewable_type'=> Book::class
+        ]);
+        Review::factory(20)->create([
+            'reviewable_id' => Author::all()->random()->id ,
+            'reviewable_type'=> Author::class
+        ]);
         // Book::factory(50)->create();
 
         // User::factory()->create([

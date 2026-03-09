@@ -25,7 +25,6 @@
         <div id="example1_wrapper" class="dataTables_wrapper dt-bootstrap4">
 
             <div class="card-header">
-                {{-- <h3 class="card-title">DataTable with default features</h3> --}}
                 <a class="btn btn-primary" href="{{ route('books.create') }}">Create new Book</a>
             </div>
 
@@ -74,13 +73,14 @@
                                 <td><a href="{{ route('books.show', $book->id) }}">{{ $book->title }}</a></td>
                                 <td>{{ $book->author->name }}</td>
                                 <td>{{ $book->status }}</td>
-                                <td>{{ $book->total_copies }}</td>
-                                {{-- <td>
-                                     Scope ( available_copy) --}}
-                                {{-- @if ($book->available_copy)
+                                <td>
+                                    @if ($book->available_copies > 0)
+                                        <span class="badge bg-info"> {{ $book->available_copies }} /
+                                            {{ $book->total_copies }}</span>
                                     @else
-                                    @endif 
-                                </td> --}}
+                                        <span class="badge bg-secondary"> 0 / {{ $book->total_copies }}</span>
+                                    @endif
+                                </td>
 
                                 <td>
                                     <a href="{{ route('books.edit', $book->id) }}" class="btn btn-secondary">Edit</a>
@@ -96,14 +96,16 @@
                                 </td>
                             </tr>
                         @endforeach
-
                     </tbody>
-
                 </table>
+
+                <p> Total Records: {{ $books->total() }}</p>
+                {{ $books->withQueryString()->links() }}
             </div>
+
         </div>
+
     </div>
-    {{ $books->withQueryString()->links() }}
 @endsection
 
 @push('scripts')

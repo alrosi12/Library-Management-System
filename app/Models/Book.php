@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -21,7 +23,6 @@ class Book extends Model
         'author_id',
         'publisher_id',
         'status',
-        'available',
     ];
 
     protected $casts = [
@@ -47,14 +48,44 @@ class Book extends Model
     {
         return $this->hasMany(Borrowing::class);
     }
-    
+
     public function reviews()
     {
-        return $this->morphMany(Review::class , 'reviewable');
+        return $this->morphMany(Review::class, 'reviewable');
     }
 
     public function currentBorrowing()
     {
         return $this->hasOne(Borrowing::class);
+    }
+
+
+    public function scopeFilter(Builder $builder, $filters)
+    {
+        $builder->when($filters['title'] ?? false, function ($builder, $value) {
+            $builder->where('title', 'LIKE', "%{$value}%");
+        });
+        $builder->when($filters['status'] ?? false, function ($builder, $value) {
+            $builder->where('status', $value);
+        });
+    }
+    public function scopeAvailable(Builder $query)
+    {
+        return $query->where('status', 'available');
+    }
+    public function scopeByLanguage(Builder $query, $lang)
+    {
+        return $query->where('language', $lang);
+    }
+    // Accessors
+
+    public function getIsAvailableAttribute()
+    {
+        return $this->status = 'available' && $this->available_copies > 0;
+    }
+
+    public function getAvailableCopiesAttribute()
+    {
+        return $this->total_copies - (Book::where('status', 'borrowed')->count());
     }
 }

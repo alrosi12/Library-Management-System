@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Author;
 use App\Models\Book;
 use App\Models\Category;
+use App\Models\Member;
 use App\Models\Publisher;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class BookController extends Controller
@@ -18,7 +21,11 @@ class BookController extends Controller
      */
     public function index()
     {
-        $books =  Book::with('author')->paginate();
+        $request = request();
+
+        $books =  Book::with('author')
+            ->filter($request->query())
+            ->paginate(15);
         return view('books.index', compact('books'));
     }
 
@@ -52,7 +59,6 @@ class BookController extends Controller
         // dd($request->all());
         $requestValidated = $request->validated();
         // dd($requestValidated);
-
         $book = Book::create($requestValidated);
         $book->categories()->sync($requestValidated['category_ids']);
         // dd($book);
@@ -66,8 +72,9 @@ class BookController extends Controller
      */
     public function show($id)
     {
+        $members = Member::all();
         $book = Book::with(['author', 'categories'])->findOrFail($id);
-        return view('books.show', compact('book'));
+        return view('books.show', compact('book', 'members'));
     }
 
     /**
@@ -93,9 +100,16 @@ class BookController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateBookRequest $request, string $id)
     {
-        //
+        // dd($request->all());
+
+        $book = Book::findOrFail($id);
+
+        $validated =  $request->validated();
+        $book->update($validated);
+        $book->categories()->sync($validated['category_ids']);
+        return redirect()->route('books.index');
     }
 
     /**

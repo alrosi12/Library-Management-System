@@ -5,20 +5,20 @@
 
             <ul class="nav nav-treeview">
                 <li class="nav-item">
-                    <a href="#" class="nav-link">
+                    <a href="{{ route('home') }}" class="nav-link">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Dashboard</p>
                     </a>
                 </li>
 
                 <li class="nav-item">
-                    <a href="{{route('books.index')}}" class="nav-link ">
+                    <a href="{{ route('books.index') }}" class="nav-link ">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Books</p>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link ">
+                    <a href="{{ route('members.index') }}" class="nav-link ">
                         <i class="far fa-circle nav-icon"></i>
                         <p>Members</p>
                     </a>
