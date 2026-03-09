@@ -14,9 +14,16 @@ class BookController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return BookResource::collection(Book::paginate(15));
+        $request = request();
+
+        $books =  Book::with('author', 'categories')
+            // ->orderBy('books.title')
+            ->filter($request->query())
+            ->paginate(15);
+
+        return BookResource::collection($books);
     }
 
     /**

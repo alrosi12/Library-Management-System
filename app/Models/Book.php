@@ -68,6 +68,29 @@ class Book extends Model
         $builder->when($filters['status'] ?? false, function ($builder, $value) {
             $builder->where('status', $value);
         });
+
+        $builder->when($filters['search'] ?? false, function ($builder, $value) {
+
+            $builder->where('title', 'LIKE', "%{$value}%")
+                ->orWhere('isbn', 'LIKE', "%{$value}%")
+                ->orWhere('author_id', 'LIKE', "%{$value}%");
+        });
+
+        // $builder->when($filters['category'] ?? false, function ($builder, $value) {
+
+        //     $builder->where('categories', 'LIKE', "%{$value}%");
+        // });
+
+        $builder->when($filters['language'] ?? false, function ($builder, $value) {
+
+            $builder->where('language', 'LIKE', "%{$value}%");
+        });
+
+        $builder->when($filters['sort'] ?? false, function ($builder, $value) {
+            //->orderBy('title', 'asc')
+
+            // $builder->Row('SELECT * FROM `books` ORDER BY `books`.`title` ASC');
+        });
     }
     public function scopeAvailable(Builder $query)
     {

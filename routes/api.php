@@ -11,5 +11,5 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
-// Route::apiResource('/books', BookController::class);
+Route::apiResource('/books', BookController::class);
 // Route::apiResource('members', MemberController::class);
