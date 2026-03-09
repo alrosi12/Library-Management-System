@@ -26,10 +26,8 @@ class BookResource extends JsonResource
             'author_id' => $this->author_id,
             'publisher_id' => $this->publisher_id,
             'status' => $this->status,
-            'categories'=> $this->categories->toArray()
+            'categories' => $this->categories->pluck('name')->toArray(),
 
         ];
     }
 }
-
-

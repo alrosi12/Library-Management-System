@@ -19,7 +19,6 @@ class BookController extends Controller
         $request = request();
 
         $books =  Book::with('author', 'categories')
-            // ->orderBy('books.title')
             ->filter($request->query())
             ->paginate(15);
 
@@ -47,20 +46,27 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        return new BookResource(Book::with('author', 'publisher', 'categories')->findOrFail($id));
+        $book = Book::with('author', 'publisher', 'categories')
+            ->findOrFail($id);
+        return new BookResource($book);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBookRequest $request, Book $book)
+    public function update(UpdateBookRequest $request, $id)
     {
 
-        $requestValidated = $request->validated();
+        $book = Book::findOrFail($id);
+
+        $validated =  $request->validated();
+        $book->update($validated);
+        $book->categories()->sync($validated['category_ids']);
+        // $requestValidated = $request->validated();
 
 
-        $book = Book::with('author', 'categories');
-        $book->update($requestValidated);
+        // $book = Book::with('author', 'categories');
+        // $book->update($requestValidated);
         // if ($request->has('category_ids')) {
         //     Book::categories()->sync($requestValidated['category_ids']);
         // }
